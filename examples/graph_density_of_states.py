@@ -27,7 +27,7 @@ while True:
   sequences = line.split(',')
   for seq in sequences:
     if (seq not in data.keys() ):
-      print seq + "is not a valid sequence"
+      print seq + " is not a valid sequence"
       continue
     plt.plot(data[seq]["energy"], data[seq]["value"], marker='o', linestyle='--', color=(random(),random(),random()), label=seq)
   plt.xlabel('Energy')

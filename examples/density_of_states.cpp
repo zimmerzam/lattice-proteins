@@ -35,7 +35,7 @@ int main(int argc, char* argv[]){
 		}
 	}
 	if(not saw_flag and not (density_flag and length_flag) ){
-		printf ("Usage: ./markov ( -s saw_file ) OR ( -d density_file - l length )\n");
+		printf ("Usage: ./density_of_states ( -s saw_file ) OR ( -d density_file - l length )\n");
 		return 1;
 	}
 
