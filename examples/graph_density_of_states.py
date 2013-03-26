@@ -1,6 +1,7 @@
 import sys
 import matplotlib.pyplot as plt
 from random import random
+import math
 
 filename = sys.argv[1]
 file = open(filename, 'r')
@@ -13,8 +14,9 @@ for line in file:
   y = []
   for dos in token[1:-1]:
     energy,value = dos[1:-1].split(',')
-    x.append( float(energy) )
-    y.append( float(value) )
+    if(float(value)>0):
+      x.append( float(energy) )
+      y.append( math.log(float(value)) )
   data[seq] = {"energy":x, "value":y}
 
 length = len(data.keys()[0])

@@ -47,15 +47,32 @@ density_states::iterator is_two_state_folder( density_states& density ){
 	--last;
 	++it; ++itp; ++itp;
 	for( ; it!=density.end(); ++it, ++itm, ++itp ){
-		if( it != density.begin() and it != last ){ // in the middle
-			double h2 = pow( itp->first - 2*it->first + itm->first, 2. )/16.;
-			double sec_der = (itp->second - 2*it->second + itm->second )/h2 ;
-			if(sec_der > 0)
-				return it;
+	  if( itp->second > 0 and it->second > 0 and itm->second > 0 and it!=last and itp!=density.end() ){
+  		double sec_der = ( log(itp->second) - log(it->second) )/( itp->first - it->first ) - ( log(it->second) - log(itm->second) )/( it->first - itm->first );
+	  	if(sec_der > 0){
+	  		return it;
+	  	}
+	  }
+		if(it==last){
+		  itp=last;
 		}
 	}
 	return it;
 }
 
+double distanceDensity( density_states& den1, density_states& den2 ){
+  std::set<double> enelist;
+  for(density_states::iterator it = den1.begin(); it!=den1.end(); ++it){
+    enelist.insert(it->first);
+  }
+  for(density_states::iterator it = den2.begin(); it!=den2.end(); ++it){
+    enelist.insert(it->first);
+  }
+  double dist = 0.;
+  for(std::set<double>::iterator it = enelist.begin(); it!=enelist.end(); ++it){
+    dist += pow(( den1[*it] - den2[*it] ),2.);
+  }
+  return sqrt(dist);
+}
 
 #endif
