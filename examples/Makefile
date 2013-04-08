@@ -1,7 +1,7 @@
 CC = g++
 CFLAGS = -msse2 -O2 -Wall
 
-EXECUTABLE = structures fold density_of_states statistics
+EXECUTABLE = structures fold density_of_states statistics similarity
 
 all: $(EXECUTABLE)
 
