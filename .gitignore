@@ -41,6 +41,7 @@ Thumbs.db
 
 # Data #
 ########
+Data
 *.dat
 *.png
 *.ps
