@@ -91,7 +91,7 @@ int main(int argc, char* argv[]){
 	
 	sawUpdate("N", true, length, saws, top, print_saw_flag);
 	if(not print_saw_flag)
-		printf("I have found %d self-avoiding-walks\n",saws.size());
+		printf("I have found %lu self-avoiding-walks\n",saws.size());
 		
 	return 0;
 }

@@ -7,7 +7,8 @@
 #include "../src/saw.h"
 #include "../src/hp.h"
 
-const long double nn_hh_energy = 0.18479956785;
+//const long double nn_hh_energy = 0.18479956785;
+const long double nn_hh_energy = 0.;
 const long double  n_hh_energy = -1.;
 
 int main(int argc, char* argv[]){
