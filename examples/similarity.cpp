@@ -92,25 +92,21 @@ int main(int argc, char* argv[]){
 		  f_barr[hpSeq( tmp.first )] = barr->first + 0.00001;
 		}
  	}
-
   unsigned int length = saws[0].structure.size()+1;
-  std::map< int, std::vector<saw> > native;
 	for(int seq = pow(2,length)-1; seq >=0; --seq){ // 0:P , 1:H
 	  if( f_barr.find(seq)==f_barr.end() ){
 	    continue;
 	  }
+	  std::vector<saw> native;
 		double trans_energy = f_barr[seq];
 		for(std::vector<saw>::iterator savoid = saws.begin(); savoid != saws.end(); ++savoid){
 			double energy = hpEnergy(seq,*savoid);
 			if( energy < trans_energy ){
-			  native[seq].push_back(*savoid);
+			  native.push_back(*savoid);
 			}
 		}
-	}
-	
-	for(std::map< int, std::vector<saw> >::iterator it = native.begin(); it!=native.end(); ++it){
-	  density_states prob = distanceDistribution(it->first, it->second);
-	  std::cout << printDensity( hpSeq(it->first, length), prob );
+		density_states prob = distanceDistribution(seq, native);
+		std::cout << printDensity( hpSeq(seq, length), prob );
 	}
 	
 	return 0;
