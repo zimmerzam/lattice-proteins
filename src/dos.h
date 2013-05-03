@@ -60,6 +60,24 @@ density_states::iterator is_two_state_folder( density_states& density ){
 	return it;
 }
 
+density_states::iterator free_energy_barrier( density_states& density, double temperature ){
+	density_states::iterator it = density.begin(), itm = density.begin(), itp = density.begin(), last = density.end();
+	--last;
+	++it; ++itp; ++itp;
+	for( ; it!=density.end(); ++it, ++itm, ++itp ){
+	  if( itp->second > 0 and it->second > 0 and itm->second > 0 and it!=last and itp!=density.end() ){
+  		double sec_der = ( log(itp->second) - log(it->second) )/( itp->first - it->first ) - ( log(it->second) - log(itm->second) )/( it->first - itm->first );
+	  	if(sec_der > 0){
+	  		return it;
+	  	}
+	  }
+		if(it==last){
+		  itp=last;
+		}
+	}
+	return it;
+}
+
 double distanceDensity( density_states& den1, density_states& den2 ){
   std::set<double> enelist;
   for(density_states::iterator it = den1.begin(); it!=den1.end(); ++it){
