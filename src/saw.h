@@ -138,7 +138,7 @@ typedef std::map<std::string,std::vector<saw> > homologous;
 
 void printHomologous(homologous dict ){
 	for(homologous::iterator it = dict.begin(); it!=dict.end(); ++it  ){
-		printf("%s  %u", it->first.c_str(), it->second.size());
+		printf("%s  %zu", it->first.c_str(), it->second.size());
 		for( std::vector<saw>::iterator val = it->second.begin(); val!=it->second.end(); ++val ){
 			printf("%s  ",val->structure.c_str());
 		}
