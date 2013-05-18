@@ -112,14 +112,14 @@ int main(int argc, char* argv[]){
  	  	saws.push_back( readSaw(line) );
  		}
 		length = saws[0].structure.size()+1;
-
+    
 		for(int seq = pow(2,length)-1; seq >=0; --seq){ // 0:P , 1:H
 			density_states density;
 			for(std::vector<saw>::iterator savoid = saws.begin(); savoid != saws.end(); ++savoid){
 				long double energy = hpEnergy(seq,*savoid);
 				++density[energy];
 			}
-			std::cout << printDensity(seq,length, density);
+			std::cout << printDensity(seq,length, density) << std::endl;
 		}
 	}
 	else if(density_flag and length_flag and ( two_state_flag or order_flag) ){
@@ -134,14 +134,14 @@ int main(int argc, char* argv[]){
  		if( two_state_flag ){
    		for( std::map<std::string, density_states>::iterator it = density.begin(); it!=density.end(); ++it ){
  	  		if( is_two_state_folder( it->second ) != it->second.end() ){
- 	  			std::cout << printDensity(it->first, it->second);
+ 	  			std::cout << printDensity(it->first, it->second) << std::endl;
  	  		}
  	  	}
   	}
 	  else if(order_flag){
 	    std::vector<std::string> sorted = sortDensity(density);
 	    for(std::vector<std::string>::iterator it = sorted.begin(); it != sorted.end(); ++it ){
-	      std::cout << printDensity( *it, density[*it] );
+	      std::cout << printDensity( *it, density[*it] ) << std::endl;
 	    }
 	  }
   }

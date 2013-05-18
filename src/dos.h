@@ -22,6 +22,8 @@
 #ifndef DENSITY_OF_STATES
 #define DENSITY_OF_STATES
 
+#include <utils/sgn.h>
+
 typedef std::map<double, double> density_states;
 
 std::string printDensity(std::string seq, density_states density){
@@ -35,7 +37,6 @@ std::string printDensity(std::string seq, density_states density){
 		line << dns->second;
 		line << ")  ";
 	}
-	line << std::endl;
 	return line.str();
 }
 
@@ -81,22 +82,52 @@ density_states::iterator is_two_state_folder( density_states& density ){
 	return it;
 }
 
-density_states::iterator free_energy_barrier( density_states& density, double temperature ){
-	density_states::iterator it = density.begin(), itm = density.begin(), itp = density.begin(), last = density.end();
-	--last;
-	++it; ++itp; ++itp;
-	for( ; it!=density.end(); ++it, ++itm, ++itp ){
-	  if( itp->second > 0 and it->second > 0 and itm->second > 0 and it!=last and itp!=density.end() ){
-  		double sec_der = ( log(itp->second) - log(it->second) )/( itp->first - it->first ) - ( log(it->second) - log(itm->second) )/( it->first - itm->first );
-	  	if(sec_der > 0){
-	  		return it;
-	  	}
-	  }
-		if(it==last){
-		  itp=last;
-		}
+double transitionTemperature( density_states& density, density_states::iterator& barrier, double initial_temperature = 1., double accuracy = 0.01 ){
+  if(barrier==density.end()){
+    return DBL_MAX;
+  }
+	double temperature = initial_temperature;
+	density_states::iterator& first_den = barrier; ++first_den;
+	double delta_G = 0, derivative = 0;
+	double tmp = 0;
+	for( density_states::iterator it = density.begin(); it != barrier; ++it ){
+	  tmp = (it->second)*exp(-(it->first)/temperature);
+	  delta_G -= tmp;
+	  derivative += (it->first)*tmp;
 	}
-	return it;
+	tmp = (barrier->second)*exp(-(barrier->first)/temperature);
+  delta_G -= tmp;
+	derivative -= (barrier->first)*tmp;
+	for( density_states::iterator it = first_den; it != density.end(); ++it ){
+	  tmp = (it->second)*exp(-(it->first)/temperature);
+	  delta_G += tmp;
+	  derivative -= (it->first)*tmp;
+	}
+	
+	double prev_delta = delta_G;
+	while (delta_G*prev_delta > 0 and std::fabs(delta_G) > accuracy){
+	  prev_delta = delta_G;
+	  temperature = temperature - accuracy*delta_G/derivative;
+	  if(temperature > 100 or temperature < 0){
+	    return DBL_MAX;
+	  }
+	  delta_G = 0;
+	  derivative = 0;
+	  for( density_states::iterator it = density.begin(); it != barrier; ++it ){
+  	  tmp = (it->second)*exp(-(it->first)/temperature);
+	    delta_G -= tmp;
+	    derivative -= (it->first)*tmp;
+	  }
+	  tmp = (barrier->second)*exp(-(barrier->first)/temperature);
+    delta_G -= tmp;
+	  derivative -= (barrier->first)*tmp;
+	  for( density_states::iterator it = first_den; it != density.end(); ++it ){
+	    tmp = (it->second)*exp(-(it->first)/temperature);
+	    delta_G += tmp;
+	    derivative += (it->first)*tmp;
+	  }
+	}
+	return temperature;
 }
 
 double distanceDensity( density_states& den1, density_states& den2 ){
