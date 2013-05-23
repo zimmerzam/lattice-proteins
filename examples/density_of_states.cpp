@@ -68,15 +68,13 @@ int main(int argc, char* argv[]){
 	// Option parser
 	bool saw_flag = false;
 	bool density_flag = false;
-	bool length_flag = false;
 	bool two_state_flag = false;
 	bool order_flag = false;
 	std::string saw_file = "";
 	std::string density_file = "";
-	unsigned int length = 0;
 	int c;
 
-	while ((c = getopt (argc, argv, "s:d:l:to")) != -1){
+	while ((c = getopt (argc, argv, "s:d:to")) != -1){
 		switch (c){
 			case 's':
 				saw_flag = true;
@@ -86,10 +84,6 @@ int main(int argc, char* argv[]){
 				density_flag = true;
 				density_file = optarg;
 				break;
-			case 'l':
-				length_flag = true;
-				length = atoi(optarg);
-				break;
 		  case 't':
 		    two_state_flag = true;
 		    break;
@@ -98,8 +92,11 @@ int main(int argc, char* argv[]){
 		    break;
 		}
 	}
-	if(not saw_flag and not (density_flag and length_flag) ){
-		printf ("Usage: ./density_of_states ( -s saw_file ) OR ( -d density_file - l length -t )\n");
+	if(not saw_flag and not density_flag ){
+		printf ("Usage: ./density_of_states ( -s saw_file ) OR ( -d density_file [options] )\n");
+		printf ("Options: \n");
+		printf ("\t-t: Print only two-state-folder (default=false).\n");
+		printf ("\t-o: Sort the sequences. Deprecated!! (default=false).\n");
 		return 1;
 	}
 
@@ -111,7 +108,7 @@ int main(int argc, char* argv[]){
  		while(getline(sawfile, line)) {
  	  	saws.push_back( readSaw(line) );
  		}
-		length = saws[0].structure.size()+1;
+		unsigned int length = saws[0].structure.size()+1;
     
 		for(int seq = pow(2,length)-1; seq >=0; --seq){ // 0:P , 1:H
 			density_states density;
@@ -122,7 +119,7 @@ int main(int argc, char* argv[]){
 			std::cout << printDensity(seq,length, density) << std::endl;
 		}
 	}
-	else if(density_flag and length_flag and ( two_state_flag or order_flag) ){
+	else if(density_flag and ( two_state_flag or order_flag) ){
 		std::map<std::string, density_states> density;
 		std::ifstream densityfile;
 		densityfile.open(density_file.c_str(),std::fstream::in); // open file

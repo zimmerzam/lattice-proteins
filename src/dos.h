@@ -93,7 +93,7 @@ double transitionTemperature( density_states& density, density_states::iterator&
 	for( density_states::iterator it = density.begin(); it != barrier; ++it ){
 	  tmp = (it->second)*exp(-(it->first)/temperature);
 	  delta_G -= tmp;
-	  derivative += (it->first)*tmp;
+	  derivative -= (it->first)*tmp;
 	}
 	tmp = (barrier->second)*exp(-(barrier->first)/temperature);
   delta_G -= tmp;
@@ -101,13 +101,14 @@ double transitionTemperature( density_states& density, density_states::iterator&
 	for( density_states::iterator it = first_den; it != density.end(); ++it ){
 	  tmp = (it->second)*exp(-(it->first)/temperature);
 	  delta_G += tmp;
-	  derivative -= (it->first)*tmp;
+	  derivative += (it->first)*tmp;
 	}
 	
 	double prev_delta = delta_G;
 	while (delta_G*prev_delta > 0 and std::fabs(delta_G) > accuracy){
 	  prev_delta = delta_G;
 	  temperature = temperature - accuracy*delta_G/derivative;
+	  //std::cout << temperature << "  " << delta_G << "  " << derivative << std::endl;
 	  if(temperature > 100 or temperature < 0){
 	    return DBL_MAX;
 	  }

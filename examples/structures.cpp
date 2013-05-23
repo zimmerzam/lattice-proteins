@@ -57,10 +57,11 @@ int main(int argc, char* argv[]){
 	// Option parser
 	bool length_flag = false;
 	bool print_saw_flag = false;
+	bool usage_flag = false;
 	unsigned int length = 0;
 	int c;
 
-	while ((c = getopt (argc, argv, "l:p")) != -1){
+	while ((c = getopt (argc, argv, "l:ph")) != -1){
 		switch (c){
 			case 'l':
 				length_flag = true;
@@ -69,10 +70,15 @@ int main(int argc, char* argv[]){
 			case 'p':
 				print_saw_flag = true;
 				break;
+		  case 'h':
+		    usage_flag = true;
+		    break;
 		}
 	}
-	if(not length_flag){
-		printf ("Usage: ./structures -l length -p(to print the structures)\n");
+	if(not length_flag or usage_flag){
+		printf ("Usage: ./structures -l length [options]\n");
+		printf ("Options:\n");
+		printf ("\t-p Print the structures (default=false)\n");
 		return 1;
 	}
 	
@@ -91,7 +97,7 @@ int main(int argc, char* argv[]){
 	
 	sawUpdate("N", true, length, saws, top, print_saw_flag);
 	if(not print_saw_flag)
-		printf("I have found %lu self-avoiding-walks\n",saws.size());
+		printf("I have found %u self-avoiding-walks\n",saws.size());
 		
 	return 0;
 }
