@@ -37,6 +37,9 @@ parser.add_option('-a', '--add_info',
 
 if( options.dos and options.free ):
   parser.error(" -d and -f are mutually exclusive. ")
+  
+if( not options.dos and not options.free ):
+  parser.error(" -d or -f is required. ")
 
 n_info = len(options.additional) if options.additional else 0
 
