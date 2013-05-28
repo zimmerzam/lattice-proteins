@@ -23,35 +23,37 @@
 #define DENSITY_OF_STATES
 
 #include <utils/sgn.h>
+#include <float.h>
 
-typedef std::map<double, double> density_states;
+class density_of_states{
+	private:
+		typedef std::map<double, double> density_type;
+	protected:
+		std::string sequence;
+		density_type density;
+	public:
+		density_of_states(std::string line);
+		std::string toString();
+		
+		typedef typename density_type::iterator iterator;
+    typedef typename density_type::const_iterator const_iterator;
+    typedef typename density_type::reverse_iterator reverse_iterator;
+    iterator begin(){return density.begin();};
+    iterator end(){return density.end();};
+    reverse_iterator rbegin(){return density.rbegin();};
+    reverse_iterator rend(){return density.rend();};
+		
+		iterator transitionBarrier();
+		double transitionTemperature( double initial_temperature = 1., double accuracy = 0.01 );
+};
 
-std::string printDensity(std::string seq, density_states density){
-	std::ostringstream line;
-	line << seq;
-	line << "  ";
-	for( density_states::iterator dns = density.begin(); dns != density.end(); ++dns ){
-		line << "(";
-		line << dns->first;
-		line << ",";
-		line << dns->second;
-		line << ")  ";
-	}
-	return line.str();
-}
-
-std::string printDensity(int seq, unsigned int length, density_states density){
-	return printDensity( hpSeq(seq,length), density );
-}
-
-std::pair<std::string,density_states> readDensity(std::string line){
+density_of_states::density_of_states(std::string line){
 	std::istringstream iss(line);
 	std::vector<std::string> tokens;
 	copy( std::istream_iterator<std::string>(iss),
 				std::istream_iterator<std::string>(),
 				std::back_inserter<std::vector<std::string> >(tokens));
-	density_states density;
-	std::string seq = tokens[0];
+	sequence = tokens[0];
 	for(unsigned int i = 1; i < tokens.size(); ++i){
 		std::istringstream map(tokens[i].substr(1, tokens[i].size()-2));
 		std::string x1,x2;
@@ -61,14 +63,27 @@ std::pair<std::string,density_states> readDensity(std::string line){
 		double value = atof(x2.c_str());
 		density[key] = value;
 	}
-	return std::make_pair(seq,density);
 }
 
-density_states::iterator is_two_state_folder( density_states& density ){
-	density_states::iterator it = density.begin(), itm = density.begin(), itp = density.begin(), last = density.end();
+std::string density_of_states::toString(){
+	std::ostringstream line;
+	line << sequence;
+	line << "  ";
+	for( iterator dns = begin(); dns != end(); ++dns ){
+		line << "(";
+		line << dns->first;
+		line << ",";
+		line << dns->second;
+		line << ")  ";
+	}
+	return line.str();
+}
+
+density_of_states::iterator density_of_states::transitionBarrier(){
+	iterator it = begin(), itm = begin(), itp = begin(), last = end();
 	--last;
 	++it; ++itp; ++itp;
-	for( ; it!=density.end(); ++it, ++itm, ++itp ){
+	for( ; it!=end(); ++it, ++itm, ++itp ){
 	  if( itp->second > 0 and it->second > 0 and itm->second > 0 and it!=last and itp!=density.end() ){
   		double sec_der = ( log(itp->second) - log(it->second) )/( itp->first - it->first ) - ( log(it->second) - log(itm->second) )/( it->first - itm->first );
 	  	if(sec_der > 0){
@@ -82,15 +97,16 @@ density_states::iterator is_two_state_folder( density_states& density ){
 	return it;
 }
 
-double transitionTemperature( density_states& density, density_states::iterator& barrier, double initial_temperature = 1., double accuracy = 0.01 ){
+double density_of_states::transitionTemperature( double initial_temperature, double accuracy){
+	iterator barrier = transitionBarrier();
   if(barrier==density.end()){
     return DBL_MAX;
   }
 	double temperature = initial_temperature;
-	density_states::iterator& first_den = barrier; ++first_den;
+	iterator& first_den = barrier; ++first_den;
 	double delta_G = 0, derivative = 0;
 	double tmp = 0;
-	for( density_states::iterator it = density.begin(); it != barrier; ++it ){
+	for( iterator it = begin(); it != barrier; ++it ){
 	  tmp = (it->second)*exp(-(it->first)/temperature);
 	  delta_G -= tmp;
 	  derivative -= (it->first)*tmp;
@@ -98,7 +114,7 @@ double transitionTemperature( density_states& density, density_states::iterator&
 	tmp = (barrier->second)*exp(-(barrier->first)/temperature);
   delta_G -= tmp;
 	derivative -= (barrier->first)*tmp;
-	for( density_states::iterator it = first_den; it != density.end(); ++it ){
+	for( iterator it = first_den; it != end(); ++it ){
 	  tmp = (it->second)*exp(-(it->first)/temperature);
 	  delta_G += tmp;
 	  derivative += (it->first)*tmp;
@@ -114,7 +130,7 @@ double transitionTemperature( density_states& density, density_states::iterator&
 	  }
 	  delta_G = 0;
 	  derivative = 0;
-	  for( density_states::iterator it = density.begin(); it != barrier; ++it ){
+	  for( iterator it = density.begin(); it != barrier; ++it ){
   	  tmp = (it->second)*exp(-(it->first)/temperature);
 	    delta_G -= tmp;
 	    derivative -= (it->first)*tmp;
@@ -122,28 +138,13 @@ double transitionTemperature( density_states& density, density_states::iterator&
 	  tmp = (barrier->second)*exp(-(barrier->first)/temperature);
     delta_G -= tmp;
 	  derivative -= (barrier->first)*tmp;
-	  for( density_states::iterator it = first_den; it != density.end(); ++it ){
+	  for( iterator it = first_den; it != density.end(); ++it ){
 	    tmp = (it->second)*exp(-(it->first)/temperature);
 	    delta_G += tmp;
 	    derivative += (it->first)*tmp;
 	  }
 	}
 	return temperature;
-}
-
-double distanceDensity( density_states& den1, density_states& den2 ){
-  std::set<double> enelist;
-  for(density_states::iterator it = den1.begin(); it!=den1.end(); ++it){
-    enelist.insert(it->first);
-  }
-  for(density_states::iterator it = den2.begin(); it!=den2.end(); ++it){
-    enelist.insert(it->first);
-  }
-  double dist = 0.;
-  for(std::set<double>::iterator it = enelist.begin(); it!=enelist.end(); ++it){
-    dist += pow(( den1[*it] - den2[*it] ),2.);
-  }
-  return sqrt(dist);
 }
 
 #endif
