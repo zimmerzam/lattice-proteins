@@ -1,6 +1,11 @@
 #protein-lattice#
 
-This package contains some (a few) routines that can be used for studying HP 
-models of protein on a bidimensional square lattice.
+This package contains some routines that can be used for studying 
+models of protein on a N-dimensional lattice.
 
-Documentation is missing, but you can take a look at some examples.
+Documentation is missing, but you can learn some information reading the 
+*README.md* files and the example source codes.
+
+## Installation and setup ##
+
+No installation is required.

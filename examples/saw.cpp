@@ -1,4 +1,5 @@
 #include "../src/default/square_lattice.h"
+#include "../src/default/cubic_lattice.h"
 #include <iostream>
 
 struct printer{
@@ -24,10 +25,11 @@ int main(int argc, char* argv[]){
 	bool length_flag = false;
 	bool print_saw_flag = false;
 	bool usage_flag = false;
+	unsigned int dimension = 2;
 	unsigned int length = 0;
 	int c;
 
-	while ((c = getopt (argc, argv, "l:ph")) != -1){
+	while ((c = getopt (argc, argv, "l:d:ph")) != -1){
 		switch (c){
 			case 'l':
 				length_flag = true;
@@ -35,6 +37,9 @@ int main(int argc, char* argv[]){
 				break;
 			case 'p':
 				print_saw_flag = true;
+				break;
+			case 'd':
+				dimension = (unsigned int) atoi(optarg);
 				break;
 		  case 'h':
 		    usage_flag = true;
@@ -44,15 +49,25 @@ int main(int argc, char* argv[]){
 	if(not length_flag or usage_flag){
 		printf ("Usage: ./saw -l length [options]\n");
 		printf ("Options:\n");
+		printf ("\t-d unsigned int: lattice dimensions (default=2, possible values: 2,3)\n");
 		printf ("\t-p Print the structures (default=false)\n");
 		return 1;
 	}
 
-	square_lattice square;
-	printer print( print_saw_flag );
-	square.iterate_SAW(length,print);
-	if( not print_saw_flag ){
-		printf("I have found %u self-avoiding-walks\n",print.total);
+  printer print( print_saw_flag );
+  if(dimension==2){
+  	square_lattice square;
+	  square.iterate_SAW(length,print);
+	  if( not print_saw_flag ){
+	  	printf("I have found %u self-avoiding-walks\n",print.total);
+	  }
+	}
+	else if(dimension==3){
+	  cubic_lattice cubic;
+	  cubic.iterate_SAW(length,print);
+	  if( not print_saw_flag ){
+	  	printf("I have found %u self-avoiding-walks\n",print.total);
+	  }
 	}
 	return 0;
 }

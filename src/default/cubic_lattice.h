@@ -16,20 +16,21 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef SQUARE_LATTICE_H
-#define SQUARE_LATTICE_H
+#ifndef CUBIC_LATTICE_H
+#define CUBIC_LATTICE_H
 
 #include "../lattice.h"
 
-typedef lattice<2,4,4> square_lattice;
+typedef lattice<3,6,6> cubic_lattice;
 
 template<>
-square_lattice::lattice(){
-	direction = {{ 'N','S','W', 'E' }};
-	symmetry_excluded = {{ {'W'} }};
-	opposite = { {'N','S'},{'S','N'},{'E','W'},{'W','E'} };
-	next = { {'N',{{'E','N','W'}} }, {'S',{{'E','S','W'}} }, 
-				   {'E',{{'E','N','S'}} }, {'W',{{'S','N','W'}} } 
+cubic_lattice::lattice(){
+	direction = {{ 'N','S','W', 'E', 'T', 'B' }};
+	symmetry_excluded = {{ {'W','T', 'B'}, {'B'} }};
+	opposite = { {'N','S'},{'S','N'},{'E','W'},{'W','E'},{'T','B'},{'B','T'} };
+	next = { {'N',{{'E','N','W','T','B'}} }, {'S',{{'E','S','W','T','B'}} }, 
+				   {'E',{{'E','N','S','T','B'}} }, {'W',{{'S','N','W','T','B'}} },
+				   {'T',{{'E','N','S','T','W'}} }, {'B',{{'S','N','W','E','B'}} } 
 				 };
 }
 
