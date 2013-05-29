@@ -28,9 +28,9 @@ cubic_lattice::lattice(){
 	direction = {{ 'N','S','W', 'E', 'T', 'B' }};
 	symmetry_excluded = {{ {'W','T', 'B'}, {'B'} }};
 	opposite = { {'N','S'},{'S','N'},{'E','W'},{'W','E'},{'T','B'},{'B','T'} };
-	next = { {'N',{{'E','N','W','T','B'}} }, {'S',{{'E','S','W','T','B'}} }, 
-				   {'E',{{'E','N','S','T','B'}} }, {'W',{{'S','N','W','T','B'}} },
-				   {'T',{{'E','N','S','T','W'}} }, {'B',{{'S','N','W','E','B'}} } 
+	next = { {'N',direction }, {'S',direction }, 
+				   {'E',direction }, {'W',direction },
+				   {'T',direction }, {'B',direction } 
 				 };
 }
 

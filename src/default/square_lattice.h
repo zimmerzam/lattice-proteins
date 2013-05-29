@@ -28,8 +28,8 @@ square_lattice::lattice(){
 	direction = {{ 'N','S','W', 'E' }};
 	symmetry_excluded = {{ {'W'} }};
 	opposite = { {'N','S'},{'S','N'},{'E','W'},{'W','E'} };
-	next = { {'N',{{'E','N','W'}} }, {'S',{{'E','S','W'}} }, 
-				   {'E',{{'E','N','S'}} }, {'W',{{'S','N','W'}} } 
+	next = { {'N',direction }, {'S',direction }, 
+				   {'E',direction }, {'W',direction } 
 				 };
 }
 

@@ -33,7 +33,7 @@ class lattice{
     typedef std::array< char, n_directions > direction_type;
     typedef std::array< std::set< char >, dimensions-1 > symmetry_excluded_type;
     typedef std::map< char, char > opposite_type;
-    typedef std::map< char, std::array<char, connectivity-1> > next_type;
+    typedef std::map< char, std::array<char, connectivity> > next_type;
   protected:
     direction_type direction;
     symmetry_excluded_type symmetry_excluded;
@@ -80,8 +80,11 @@ void lattice<dimensions, n_directions, connectivity>::sawUpdate( std::string pat
     return;
   }
   char last = path[size-1];
-  for(int c = 0; c != connectivity-1; ++c){
+  for(int c = 0; c != connectivity; ++c){
     char next_dir = next[last][c];
+    if( last==opposite[next_dir] ){
+    	continue;
+    }
     if(check_symmetry.first and symmetry_excluded[check_symmetry.second].find(next_dir)!=symmetry_excluded[check_symmetry.second].end()){
       continue;
     }
