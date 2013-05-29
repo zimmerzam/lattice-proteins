@@ -45,6 +45,7 @@ class lattice{
     void sawUpdate( std::string path, unsigned int length, std::pair<bool, unsigned int> check_symmetry, Functor& todo );
   public:
     lattice();
+    unsigned int endToEndDistance(std::string path);
     
     template< typename Functor >
     void iterate_RW( unsigned int length, Functor& todo );
@@ -102,6 +103,19 @@ void lattice<dimensions, n_directions, connectivity>::sawUpdate( std::string pat
       sawUpdate(test, length, check, todo);
     }
   }
+}
+
+template< unsigned int dimensions, unsigned int n_directions, unsigned int connectivity >
+unsigned int lattice<dimensions, n_directions, connectivity>::endToEndDistance(std::string path){
+	std::map<char,unsigned int> validator;
+	for(unsigned int i = 0; i!=path.size(); ++i){
+		++validator[ path[path.size()-1-i] ];
+	}
+	unsigned int dist;
+	for( typename direction_type::iterator it = direction.begin(); it!= direction.end(); ++it ){
+		dist += abs( validator[*it] - validator[ opposite[*it] ] );
+	}
+	return dist/2;
 }
 
 template< unsigned int dimensions, unsigned int n_directions, unsigned int connectivity >
