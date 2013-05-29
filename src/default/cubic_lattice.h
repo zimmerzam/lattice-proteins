@@ -1,3 +1,6 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*    Copyright 2013 Stefano Zamuner                                          */
 /*                                                                            */
 /*    This file is part of lattice-proteins.                                  */
 /*                                                                            */
