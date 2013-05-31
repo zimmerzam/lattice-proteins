@@ -1,6 +1,8 @@
 #include "../src/default/square_lattice.h"
 #include "../src/default/cubic_lattice.h"
 #include <iostream>
+#include <list>
+#include <string>
 
 struct printer{
 	unsigned int total;
@@ -11,10 +13,13 @@ struct printer{
 		print_saw = print_saw_flag;
 	}
 	
-	void operator()(std::string path){
+	void operator()(std::list<std::string> kwargs){
 		++total;
 		if( print_saw ){
-			std::cout << path << std::endl;
+			for(std::list<std::string>::iterator it = kwargs.begin(); it!=kwargs.end();++it){
+				std::cout << *it << "  ";
+			}
+			std::cout << std::endl;
 		}
 	}
 };
@@ -57,14 +62,16 @@ int main(int argc, char* argv[]){
   printer print( print_saw_flag );
   if(dimension==2){
   	square_lattice square;
-	  square.iterate_SAW(length,print);
+	  square_lattice::iterate_saw<printer> it = square.iterate_SAW(length,print);
+	  it( );
 	  if( not print_saw_flag ){
 	  	printf("I have found %u self-avoiding-walks\n",print.total);
 	  }
 	}
 	else if(dimension==3){
 	  cubic_lattice cubic;
-	  cubic.iterate_SAW(length,print);
+	  cubic_lattice::iterate_saw<printer> it = cubic.iterate_SAW(length,print);
+	  it( {} );
 	  if( not print_saw_flag ){
 	  	printf("I have found %u self-avoiding-walks\n",print.total);
 	  }

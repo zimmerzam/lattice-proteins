@@ -1,8 +1,13 @@
+#include <list>
+#include <iostream>
 #include "../src/sequence.h"
 
 struct print{
-	void operator() (std::string seq){
-		std::cout << seq << std::endl;
+	void operator() (std::list<std::string> seq){
+		for( std::list<std::string>::iterator it = seq.begin(); it!=seq.end();++it ){
+			std::cout << *it << "  ";
+		}
+		std::cout << std::endl;
 	}
 };
 
@@ -51,7 +56,7 @@ int main(int argc, char* argv[]){
 	word<3> dict( {{'A', 'B', 'C'}} );
 	
 	print printer;
-	dict.iterate_words( dict.toString(first, length), dict.toString(last, length), skip, printer );
-	
+	word<3>::iterate_word<print> it = dict.iterateWords( dict.toString(first, length), dict.toString(last, length), skip, printer );
+	it();
 	return 0;
 }

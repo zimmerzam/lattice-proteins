@@ -26,33 +26,66 @@
 #include <map>
 #include <set>
 #include <string>
-#include <iostream>
+#include <list>
+#include <sstream>
+
+#include "iterate.h"
+
 template< unsigned int dimensions, unsigned int n_directions, unsigned int connectivity >
 class lattice{
   private:
-    typedef std::array< char, n_directions > direction_type;
-    typedef std::array< std::set< char >, dimensions-1 > symmetry_excluded_type;
-    typedef std::map< char, char > opposite_type;
-    typedef std::map< char, std::array<char, connectivity> > next_type;
+    typedef typename std::array< char, n_directions > direction_type;
+    typedef typename std::array< std::set< char >, dimensions-1 > symmetry_excluded_type;
+    typedef typename std::map< char, char > opposite_type;
+    typedef typename std::map< char, std::array<char, connectivity> > next_type;
   protected:
     direction_type direction;
     symmetry_excluded_type symmetry_excluded;
     opposite_type opposite;
     next_type next;
     
+    // Self Avoiding Walk definition
     bool sawValidate( std::string path );
     template <typename Functor>
-    void sawUpdate( std::string path, unsigned int length, std::pair<bool, unsigned int> check_symmetry, Functor& todo );
-  public:
-    lattice();
-    unsigned int endToEndDistance(std::string path);
+    void sawUpdate( std::string path, unsigned int length, std::pair<bool, unsigned int> check_symmetry, Functor& todo,typename iterate<Functor>::kwargs_type kwargs );
     
+  public:
+  	/* constructor and non-iterative methods */
+  	lattice();
+    unsigned int endToEndDistance(std::string path);
+  	
+  	/* iterative methods */
+  	
+  	// iterate SAW class
+  	template <typename Functor>
+    class iterate_saw: public iterate<Functor>{
+  		private:
+  			lattice& parent;
+      public:
+        iterate_saw( unsigned int length, Functor& todo, lattice<dimensions, n_directions, connectivity>& parent): iterate<Functor>::iterate(length,0,0,0,todo), parent(parent) {};
+        void operator()( typename iterate<Functor>::kwargs_type kwargs = typename iterate<Functor>::kwargs_type({}) );
+    };
+  	// iterate SAW (user-friendly constructor)
+  	template< typename Functor >
+    iterate_saw<Functor> iterate_SAW( unsigned int length, Functor& todo ); 
+    
+    /* TODO */
+    // iterate RW
     template< typename Functor >
     void iterate_RW( unsigned int length, Functor& todo );
     
-    template< typename Functor >
-    void iterate_SAW( unsigned int length, Functor& todo );  
+     
 };
+
+template< unsigned int dimensions, unsigned int n_directions, unsigned int connectivity >
+template <typename Functor>
+void lattice<dimensions, n_directions, connectivity>::iterate_saw<Functor>::operator()( typename iterate<Functor>::kwargs_type kwargs){
+	std::string path = "";
+  path += parent.direction[0];
+  std::pair<bool, unsigned int> check_symmetry = std::make_pair(true,0);
+  parent.sawUpdate<Functor>( path, iterate_saw<Functor>::length-1, check_symmetry, iterate_saw<Functor>::todo, kwargs );
+}
+
 
 template< unsigned int dimensions, unsigned int n_directions, unsigned int connectivity >
 bool lattice<dimensions, n_directions, connectivity>::sawValidate(std::string path){
@@ -73,10 +106,12 @@ bool lattice<dimensions, n_directions, connectivity>::sawValidate(std::string pa
 template< unsigned int dimensions, unsigned int n_directions, unsigned int connectivity >
 template< typename Functor >
 void lattice<dimensions, n_directions, connectivity>::sawUpdate( std::string path, unsigned int length, 
-                                                     std::pair<bool, unsigned int> check_symmetry, Functor& todo ){
+                                                     std::pair<bool, unsigned int> check_symmetry, Functor& todo,
+                                                     typename iterate<Functor>::kwargs_type kwargs ){
   unsigned int size = path.size();
   if(size==length){
-    todo(path);
+   	kwargs.push_back(path);
+    todo(kwargs);
     return;
   }
   char last = path[size-1];
@@ -103,7 +138,7 @@ void lattice<dimensions, n_directions, connectivity>::sawUpdate( std::string pat
       else{
         check = check_symmetry;
       }
-      sawUpdate(test, length, check, todo);
+      sawUpdate(test, length, check, todo, kwargs);
     }
   }
 }
@@ -129,10 +164,7 @@ void lattice<dimensions, n_directions, connectivity>::iterate_RW( unsigned int l
 
 template< unsigned int dimensions, unsigned int n_directions, unsigned int connectivity >
 template< typename Functor >
-void lattice<dimensions, n_directions, connectivity>::iterate_SAW( unsigned int length, Functor& todo ){
-  std::string path = "";
-  path += direction[0];
-  std::pair<bool, unsigned int> check_symmetry = std::make_pair(true,0);
-  sawUpdate( path, length-1, check_symmetry, todo );
+lattice<dimensions, n_directions, connectivity>::iterate_saw<Functor> lattice<dimensions, n_directions, connectivity>::iterate_SAW( unsigned int length, Functor& todo ){
+  return iterate_saw<Functor>(length, todo, *this);
 }
 #endif

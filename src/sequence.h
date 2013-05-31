@@ -27,13 +27,15 @@
 #include <cmath>
 #include <string>
 #include <iostream>
-#include <initializer_list>
 
-template < int alphabet_size >
+#include "iterate.h"
+
+template < unsigned int alphabet_size >
 class word{
 	private:
 		std::array<char,alphabet_size> alphabet;
 		std::map<char, unsigned int> letter_index;
+		
 	public:
 		word( std::array<char, alphabet_size> list ): alphabet(list) {
 			for(unsigned int i = 0; i != alphabet.size(); ++i){
@@ -44,15 +46,38 @@ class word{
 		int toInt( std::string seq );
 		std::string toString(int iseq, unsigned int length);
 		
+		template <typename Functor>
+    class iterate_word: public iterate<Functor>{
+  		private:
+  			word& parent;
+      public:
+        iterate_word( unsigned int length, unsigned int first, unsigned int last, unsigned int skip, Functor& todo, word<alphabet_size>& parent): iterate<Functor>::iterate(length,first,last,skip,todo), parent(parent) {};
+        void operator()( typename iterate<Functor>::kwargs_type kwargs = typename iterate<Functor>::kwargs_type({}) );
+    };
+		
 		template < typename Functor >
-		void iterate_words( int length, int first, int last, unsigned int skip, Functor todo );
+		iterate_word<Functor> iterateWords( int length, int first, int last, unsigned int skip, Functor& todo );
 		template < typename Functor >
-		void iterate_words( int length, unsigned int skip, Functor todo );
+		iterate_word<Functor> iterateWords( int length, unsigned int skip, Functor& todo );
 		template < typename Functor >
-		void iterate_words( std::string first, std::string last, unsigned int skip, Functor todo );
+		iterate_word<Functor> iterateWords( std::string first, std::string last, unsigned int skip, Functor& todo );
 };
 
-template < int alphabet_size >
+template < unsigned int alphabet_size >
+template <typename Functor>
+void word<alphabet_size>::iterate_word<Functor>::operator()( typename iterate<Functor>::kwargs_type kwargs){
+	if(iterate<Functor>::first >= iterate<Functor>::last){
+		return;
+	}
+	++iterate<Functor>::skip;
+	for (unsigned int i = iterate<Functor>::first; i < iterate<Functor>::last; i+=iterate<Functor>::skip){
+		typename iterate<Functor>::kwargs_type kw = kwargs;
+		kw.push_back( parent.toString(i, iterate<Functor>::length ) );
+		iterate<Functor>::todo( kw );
+	}
+}
+
+template < unsigned int alphabet_size >
 int word<alphabet_size>::toInt(std::string seq){
 	int iseq = 0;
 	for(unsigned int i = 0; i < seq.size(); ++i){
@@ -61,7 +86,7 @@ int word<alphabet_size>::toInt(std::string seq){
 	return iseq;
 }
 
-template < int alphabet_size >
+template < unsigned int alphabet_size >
 std::string word<alphabet_size>::toString(int iseq, unsigned int length){
 	std::string seq = "";
 	int p_iseq = iseq;
@@ -73,31 +98,26 @@ std::string word<alphabet_size>::toString(int iseq, unsigned int length){
 	return seq;
 }
 
-template < int alphabet_size >
+template < unsigned int alphabet_size >
 template < typename Functor >
-void word<alphabet_size>::iterate_words( int length, int first, int last, unsigned int skip, Functor todo ){
-	if(first >= last){
-		return;
-	}
-	++skip;
-	for (int i = first; i < last; i+=skip){
-		todo( toString(i, length) );
-	}
+word<alphabet_size>::iterate_word<Functor> word<alphabet_size>::iterateWords( int length, int first, int last, unsigned int skip, Functor& todo ){
+	return word<alphabet_size>::iterate_word<Functor>( length, first, last, skip, todo, *this );
 }
 
-template < int alphabet_size >
+template < unsigned int alphabet_size >
 template < typename Functor >
-void word<alphabet_size>::iterate_words( int length, unsigned int skip, Functor todo ){
-	iterate_words( length, 0, pow(alphabet_size, length), skip, todo );
+word<alphabet_size>::iterate_word<Functor> word<alphabet_size>::iterateWords( int length, unsigned int skip, Functor& todo ){
+	return word<alphabet_size>::iterateWords<Functor>( length, 0, pow(alphabet_size, length), skip, todo, *this );
 }
 
-template < int alphabet_size >
+template < unsigned int alphabet_size >
 template < typename Functor >
-void word<alphabet_size>::iterate_words( std::string first, std::string last, unsigned int skip, Functor todo ){
+word<alphabet_size>::iterate_word<Functor> word<alphabet_size>::iterateWords( std::string first, std::string last, unsigned int skip, Functor& todo ){
 	if( first.size() != last.size() ){
-		return;
+		std::cout << " The input strings have different lengths " << std::endl;
+		return word<alphabet_size>::iterateWords<Functor>( 0, 0, 0, 0, todo );
 	}
-	iterate_words( first.size(), toInt(first), toInt(last)+1, skip, todo );
+	return word<alphabet_size>::iterateWords<Functor>( first.size(), toInt(first), toInt(last)+1, skip, todo );
 }
 
 #endif
