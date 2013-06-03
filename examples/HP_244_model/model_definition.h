@@ -22,9 +22,10 @@
 #ifndef HP_244_MODEL_DEFINITION_H
 #define HP_244_MODEL_DEFINITION_H
 
-#include "../src/model.h"
-#include "../src/default/square_lattice.h"
+#include "../../src/model.h"
+#include "../../src/default/square_lattice.h"
 #include <string>
+#include <array>
 
 namespace hp_244{
 
@@ -51,7 +52,8 @@ struct get_interaction{
 	}
 };
 
-typedef lattice_model<dimensions,n_directions,connectivity,alphabet_size,n_classes,get_interaction> lattice_model;
+const std::array<char,alphabet_size> alphabet = {{'H','P'}};
+typedef lattice_model<dimensions,n_directions,connectivity,alphabet_size,n_classes,get_interaction> model;
 typedef contact_map<n_classes,get_interaction> contact_map;
 
 } // end namespace

@@ -6,7 +6,6 @@
 
 struct getInteractions{
   int operator()(std::string path, unsigned int i, unsigned int j){
-    
     return -1;
   }
 };

@@ -149,7 +149,7 @@ unsigned int lattice<dimensions, n_directions, connectivity>::endToEndDistance(s
 	for(unsigned int i = 0; i!=path.size(); ++i){
 		++validator[ path[path.size()-1-i] ];
 	}
-	unsigned int dist;
+	unsigned int dist = 0;
 	for( typename direction_type::iterator it = direction.begin(); it!= direction.end(); ++it ){
 		dist += abs( validator[*it] - validator[ opposite[*it] ] );
 	}

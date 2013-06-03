@@ -1,7 +1,7 @@
-CC = g++46
+CC = g++
 CFLAGS = -msse2 -O2 -Wall -std=c++0x -static
 
-EXECUTABLE = saw sequences hamiltonian
+EXECUTABLE = HP_244_model
 
 all: $(EXECUTABLE)
 

@@ -37,11 +37,12 @@ class lattice_model{
 		hamiltonian<alphabet_size, n_classes> energy_parameters;
 		InteractionClass getInteractionClass;
 	public:
+    typedef contact_map<n_classes, InteractionClass> contact_map_type;
 		lattice_model( std::array<char, alphabet_size> letters ):sequence(letters), energy_parameters(letters){};
 		double getEnergy( const std::string& path, const std::string& sequence );
-		double getEnergy( const std::string sequence, contact_map<n_classes, InteractionClass> map );
+		double getEnergy( const std::string sequence, contact_map_type map );
 		density_of_states getDensityOfStates( const std::string& sequence );
-		contact_map<n_classes, InteractionClass> getContactMap( const std::string& path );
+		contact_map_type getContactMap( const std::string& path );
 		
 		/* Iterators */
 		template <typename Functor> 
@@ -79,6 +80,10 @@ double lattice_model<dimensions, n_directions, connectivity, alphabet_size, n_cl
 	return ene;
 }
 
+template< unsigned int dimensions, unsigned int n_directions, unsigned int connectivity, unsigned int alphabet_size, unsigned int n_classes, typename InteractionClass >
+typename lattice_model<dimensions, n_directions, connectivity, alphabet_size, n_classes, InteractionClass>::contact_map_type lattice_model<dimensions, n_directions, connectivity, alphabet_size, n_classes, InteractionClass>::getContactMap( const std::string& path ){
+  return contact_map_type(path);
+}
 
 template< unsigned int dimensions, unsigned int n_directions, unsigned int connectivity, unsigned int alphabet_size, unsigned int n_classes, typename InteractionClass >
 template < typename Functor >

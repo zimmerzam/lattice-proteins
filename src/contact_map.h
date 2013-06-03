@@ -41,6 +41,47 @@ class contact_map{
 		
 		void addContact( unsigned int contact, unsigned int cls );
 		contact_type getContacts( unsigned int cls );
+		
+		std::string toString();
 };
 
+template< unsigned int n_classes, typename InteractionClass >
+contact_map<n_classes, InteractionClass>::contact_map( std::string path ){
+  unsigned int size = path.size();
+  for(unsigned int i=0; i != size-1; ++i){
+    for(unsigned int j=i; j != size; ++j){
+      unsigned int cnt = ( (1<<j)|(1<<i) );
+      int cls = getInteractionClass( path, i, j );
+      addContact( cnt, cls );
+    }
+  }
+}
+
+template< unsigned int n_classes, typename InteractionClass >
+void contact_map<n_classes, InteractionClass>::addContact( unsigned int contact, unsigned int cls ){
+  data[cls].insert(contact);
+}
+
+template< unsigned int n_classes, typename InteractionClass >
+typename contact_map<n_classes, InteractionClass>::contact_type contact_map<n_classes, InteractionClass>::getContacts( unsigned int cls ){
+  return data[cls];
+}
+
+template< unsigned int n_classes, typename InteractionClass >
+std::string contact_map<n_classes, InteractionClass>::toString(){
+  std::string str = "";
+  for(unsigned int cls = 0; cls!=n_classes; ++cls){
+    str+="[";
+    for(typename contact_type::iterator it=data[cls].begin(); it!=data[cls].end(); ++it){
+      if(it!=data[cls].begin()){
+        str+=",";
+      }
+      std::stringstream ss;
+      ss << *it;
+      str+=ss.str();
+    }
+    str+="]  ";
+  }
+  return str;
+}
 #endif
