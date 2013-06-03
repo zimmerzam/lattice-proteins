@@ -1,4 +1,4 @@
-CC = g++46
+CC = g++
 CFLAGS = -msse2 -O2 -Wall -std=c++0x -static
 
 EXECUTABLE = saw sequences hamiltonian model density_of_states

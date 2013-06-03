@@ -1,5 +1,7 @@
 #include <list>
 #include <iostream>
+#include <getopt.h>
+
 #include "../src/sequence.h"
 
 struct print{
@@ -19,7 +21,7 @@ int main(int argc, char* argv[]){
 	int c;
 
 	while ((c = getopt (argc, argv, "s:L:f:l:h")) != -1){
-		switch (c){
+  		switch (c){
 			case 'L':
 				length = atoi( optarg );
 				break;
@@ -53,10 +55,10 @@ int main(int argc, char* argv[]){
 		return 1;
 	}
 
-	word<3> dict( {{'A', 'B', 'C'}} );
+	word<3> dict( std::array<char, 3>( {{'A', 'B', 'C'}} ) );
 	
 	print printer;
-	word<3>::iterate_word<print> it = dict.iterateWords( dict.toString(first, length), dict.toString(last, length), skip, printer );
+	word<3>::iterator<print> it = dict.iterateWords( dict.toString(first, length), dict.toString(last, length), skip, printer );
 	it();
 	return 0;
 }

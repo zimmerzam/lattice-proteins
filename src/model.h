@@ -22,6 +22,7 @@
 #ifndef LATTICE_MODEL_H
 #define LATTICE_MODEL_H
 
+#include "iterate.h"
 #include "lattice.h"
 #include "sequence.h"
 #include "hamiltonian.h"
@@ -42,19 +43,26 @@ class lattice_model{
 		density_of_states getDensityOfStates( const std::string& sequence );
 		contact_map<n_classes, InteractionClass> getContactMap( const std::string& path );
 		
-		/* Iterate all possible sequences */
-		template < typename Functor >
-		void iterateSequences( int length, int first, int last, unsigned int skip, Functor& todo );
-		template < typename Functor >
-		void iterateSequences( int length, unsigned int skip, Functor todo );
-		template < typename Functor >
-		void iterateSequences( std::string first, std::string last, unsigned int skip, Functor& todo );
+		/* Iterators */
+		template <typename Functor> 
+		struct iterator{
+		  typedef typename word<alphabet_size>::template iterator<Functor> words;
+		  typedef typename lattice<dimensions, n_directions, connectivity>::template iterator<Functor> paths;
+		};
 		
+		template < typename Functor >
+		typename iterator<Functor>::words iterateSequences( unsigned int length, unsigned int first, unsigned int last, unsigned int skip, Functor& todo );
+		template < typename Functor >
+		typename iterator<Functor>::words iterateSequences( unsigned int length, unsigned int skip, Functor& todo );
+		template < typename Functor >
+		typename iterator<Functor>::words iterateSequences( std::string first, std::string last, unsigned int skip, Functor& todo );
+
 		/* Iterate all possible paths */
 		template< typename Functor >
-    void iterateRW( unsigned int length, Functor& todo );
+    typename iterator<Functor>::paths iterateRW( unsigned int length, Functor& todo );
     template< typename Functor >
-    void iterateSAW( unsigned int length, Functor& todo );
+    typename iterator<Functor>::paths iterateSAW( unsigned int length, Functor& todo );
+
 };
 
 template< unsigned int dimensions, unsigned int n_directions, unsigned int connectivity, unsigned int alphabet_size, unsigned int n_classes, typename InteractionClass >
@@ -71,33 +79,35 @@ double lattice_model<dimensions, n_directions, connectivity, alphabet_size, n_cl
 	return ene;
 }
 
+
 template< unsigned int dimensions, unsigned int n_directions, unsigned int connectivity, unsigned int alphabet_size, unsigned int n_classes, typename InteractionClass >
 template < typename Functor >
-void lattice_model<dimensions, n_directions, connectivity, alphabet_size, n_classes, InteractionClass>::iterateSequences( int length, int first, int last, unsigned int skip, Functor& todo ){
-	sequence.iterate_words(length, first, last, skip, todo);
+typename lattice_model<dimensions, n_directions, connectivity, alphabet_size, n_classes, InteractionClass>::template iterator<Functor>::words lattice_model<dimensions, n_directions, connectivity, alphabet_size, n_classes, InteractionClass>::iterateSequences( unsigned int length, unsigned int first, unsigned int last, unsigned int skip, Functor& todo ){
+	return sequence.iterateWords(length, first, last, skip, todo);
 }
 
 template< unsigned int dimensions, unsigned int n_directions, unsigned int connectivity, unsigned int alphabet_size, unsigned int n_classes, typename InteractionClass >
 template < typename Functor >
-void lattice_model<dimensions, n_directions, connectivity, alphabet_size, n_classes, InteractionClass>::iterateSequences( int length, unsigned int skip, Functor todo ){
-	sequence.iterate_words(length, skip, todo);
+typename lattice_model<dimensions, n_directions, connectivity, alphabet_size, n_classes, InteractionClass>::template iterator<Functor>::words lattice_model<dimensions, n_directions, connectivity, alphabet_size, n_classes, InteractionClass>::iterateSequences( unsigned int length, unsigned int skip, Functor& todo ){
+  return sequence.iterateWords(length, skip, todo);
 }
 
 template< unsigned int dimensions, unsigned int n_directions, unsigned int connectivity, unsigned int alphabet_size, unsigned int n_classes, typename InteractionClass >
 template < typename Functor >
-void lattice_model<dimensions, n_directions, connectivity, alphabet_size, n_classes, InteractionClass>::iterateSequences( std::string first, std::string last, unsigned int skip, Functor& todo ){
-	sequence.iterate_words(first, last, skip, todo);
+typename lattice_model<dimensions, n_directions, connectivity, alphabet_size, n_classes, InteractionClass>::template iterator<Functor>::words lattice_model<dimensions, n_directions, connectivity, alphabet_size, n_classes, InteractionClass>::iterateSequences( std::string first, std::string last, unsigned int skip, Functor& todo ){
+	return sequence.iterateWords(first, last, skip, todo);
 }
 
 template< unsigned int dimensions, unsigned int n_directions, unsigned int connectivity, unsigned int alphabet_size, unsigned int n_classes, typename InteractionClass >
 template< typename Functor >
-void lattice_model<dimensions, n_directions, connectivity, alphabet_size, n_classes, InteractionClass>::iterateRW( unsigned int length, Functor& todo ){
-	space.iterate_RW(length, todo);
+typename lattice_model<dimensions, n_directions, connectivity, alphabet_size, n_classes, InteractionClass>::template iterator<Functor>::paths lattice_model<dimensions, n_directions, connectivity, alphabet_size, n_classes, InteractionClass>::iterateRW( unsigned int length, Functor& todo ){
+	return space.iterate_RW(length, todo);
 }
 
 template< unsigned int dimensions, unsigned int n_directions, unsigned int connectivity, unsigned int alphabet_size, unsigned int n_classes, typename InteractionClass >
 template< typename Functor >
-void lattice_model<dimensions, n_directions, connectivity, alphabet_size, n_classes, InteractionClass>::iterateSAW( unsigned int length, Functor& todo ){
-	space.iterate_SAW(length, todo);
+typename lattice_model<dimensions, n_directions, connectivity, alphabet_size, n_classes, InteractionClass>::template iterator<Functor>::paths lattice_model<dimensions, n_directions, connectivity, alphabet_size, n_classes, InteractionClass>::iterateSAW( unsigned int length, Functor& todo ){
+	return space.iterate_SAW(length, todo);
 }
+
 #endif 

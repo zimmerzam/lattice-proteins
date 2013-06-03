@@ -3,6 +3,7 @@
 #include <iostream>
 #include <list>
 #include <string>
+#include <getopt.h>
 
 struct printer{
 	unsigned int total;
@@ -62,7 +63,7 @@ int main(int argc, char* argv[]){
   printer print( print_saw_flag );
   if(dimension==2){
   	square_lattice square;
-	  square_lattice::iterate_saw<printer> it = square.iterate_SAW(length,print);
+	  square_lattice::iterator<printer> it = square.iterate_SAW(length,print);
 	  it( );
 	  if( not print_saw_flag ){
 	  	printf("I have found %u self-avoiding-walks\n",print.total);
@@ -70,7 +71,7 @@ int main(int argc, char* argv[]){
 	}
 	else if(dimension==3){
 	  cubic_lattice cubic;
-	  cubic_lattice::iterate_saw<printer> it = cubic.iterate_SAW(length,print);
+	  cubic_lattice::iterator<printer> it = cubic.iterate_SAW(length,print);
 	  it( {} );
 	  if( not print_saw_flag ){
 	  	printf("I have found %u self-avoiding-walks\n",print.total);

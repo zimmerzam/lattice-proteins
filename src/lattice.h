@@ -58,16 +58,16 @@ class lattice{
   	
   	// iterate SAW class
   	template <typename Functor>
-    class iterate_saw: public iterate<Functor>{
+    class iterator: public iterate<Functor>{
   		private:
   			lattice& parent;
       public:
-        iterate_saw( unsigned int length, Functor& todo, lattice<dimensions, n_directions, connectivity>& parent): iterate<Functor>::iterate(length,0,0,0,todo), parent(parent) {};
+        iterator( unsigned int length, Functor& todo, lattice<dimensions, n_directions, connectivity>& parent): iterate<Functor>::iterate(length,0,0,0,todo), parent(parent) {};
         void operator()( typename iterate<Functor>::kwargs_type kwargs = typename iterate<Functor>::kwargs_type({}) );
     };
   	// iterate SAW (user-friendly constructor)
   	template< typename Functor >
-    iterate_saw<Functor> iterate_SAW( unsigned int length, Functor& todo ); 
+    iterator<Functor> iterate_SAW( unsigned int length, Functor& todo ); 
     
     /* TODO */
     // iterate RW
@@ -79,11 +79,11 @@ class lattice{
 
 template< unsigned int dimensions, unsigned int n_directions, unsigned int connectivity >
 template <typename Functor>
-void lattice<dimensions, n_directions, connectivity>::iterate_saw<Functor>::operator()( typename iterate<Functor>::kwargs_type kwargs){
+void lattice<dimensions, n_directions, connectivity>::iterator<Functor>::operator()( typename iterate<Functor>::kwargs_type kwargs){
 	std::string path = "";
   path += parent.direction[0];
   std::pair<bool, unsigned int> check_symmetry = std::make_pair(true,0);
-  parent.sawUpdate<Functor>( path, iterate_saw<Functor>::length-1, check_symmetry, iterate_saw<Functor>::todo, kwargs );
+  parent.sawUpdate<Functor>( path, iterator<Functor>::length-1, check_symmetry, iterator<Functor>::todo, kwargs );
 }
 
 
@@ -164,7 +164,7 @@ void lattice<dimensions, n_directions, connectivity>::iterate_RW( unsigned int l
 
 template< unsigned int dimensions, unsigned int n_directions, unsigned int connectivity >
 template< typename Functor >
-lattice<dimensions, n_directions, connectivity>::iterate_saw<Functor> lattice<dimensions, n_directions, connectivity>::iterate_SAW( unsigned int length, Functor& todo ){
-  return iterate_saw<Functor>(length, todo, *this);
+lattice<dimensions, n_directions, connectivity>::iterator<Functor> lattice<dimensions, n_directions, connectivity>::iterate_SAW( unsigned int length, Functor& todo ){
+  return iterator<Functor>(length, todo, *this);
 }
 #endif

@@ -22,7 +22,6 @@
 #ifndef DENSITY_OF_STATES
 #define DENSITY_OF_STATES
 
-#include <utils/sgn.h>
 #include <float.h>
 
 class density_of_states{
