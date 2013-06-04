@@ -19,44 +19,10 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef HP_244_MODEL_DEFINITION_H
-#define HP_244_MODEL_DEFINITION_H
+#ifndef HP_ALPHABET_H
+#define HP_ALPHABET_H
 
-#include "../../src/model.h"
-#include "../../src/default/square_lattice.h"
-#include "../../src/default/hp_alphabet.h"
-#include <string>
-#include <array>
-
-namespace hp_244{
-
-const unsigned int dimensions = 2;
-const unsigned int n_directions = 4;
-const unsigned int connectivity = 4;
-const unsigned int alphabet_size = 2;
-const unsigned int n_classes = 2;
-
-struct get_interaction{
-	lattice<dimensions,n_directions,connectivity> space;
-	
-	int operator()( const std::string& path, unsigned int i, unsigned int j ){
-		unsigned int seq_dist = abs(j-i);
-		if( seq_dist < 2 ){
-			return -1;
-		}
-		std::string subpath = path.substr(i,seq_dist+1);
-		unsigned int distance = space.endToEndDistance( subpath );
-		if(distance==1){
-			return 0;
-		}
-		return 1;
-	}
-};
-
-const std::array<char,alphabet_size> alphabet = hp::alphabet;
-typedef lattice_model<dimensions,n_directions,connectivity,alphabet_size,n_classes,get_interaction> model;
-typedef contact_map<n_classes,get_interaction> contact_map;
-
-} // end namespace
-
+namespace hp{
+  const std::array<char,2> alphabet = {{'H','P'}};
+}
 #endif
