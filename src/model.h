@@ -28,6 +28,7 @@
 #include "hamiltonian.h"
 #include "contact_map.h"
 #include "density_of_states.h"
+#include "utils.h"
 
 template< unsigned int dimensions, unsigned int n_directions, unsigned int connectivity, unsigned int alphabet_size, unsigned int n_classes, typename InteractionClass >
 class lattice_model{
@@ -38,9 +39,10 @@ class lattice_model{
 		InteractionClass getInteractionClass;
 	public:
     typedef contact_map<n_classes, InteractionClass> contact_map_type;
+    
 		lattice_model( std::array<char, alphabet_size> letters ):sequence(letters), energy_parameters(letters){};
 		double getEnergy( const std::string& path, const std::string& sequence );
-		double getEnergy( const std::string sequence, contact_map_type map );
+		double getEnergy( const std::string& sequence, const contact_map_type& map );
 		density_of_states getDensityOfStates( const std::string& sequence );
 		contact_map_type getContactMap( const std::string& path );
 		
@@ -59,25 +61,40 @@ class lattice_model{
 		typename iterator<Functor>::words iterateSequences( std::string first, std::string last, unsigned int skip, Functor& todo );
 
 		/* Iterate all possible paths */
-		template< typename Functor >
-    typename iterator<Functor>::paths iterateRW( unsigned int length, Functor& todo );
     template< typename Functor >
     typename iterator<Functor>::paths iterateSAW( unsigned int length, Functor& todo );
+    
+    void initialize_SAW(unsigned int length);
+    void initialize_SAW(std::string filename);
 
 };
 
 template< unsigned int dimensions, unsigned int n_directions, unsigned int connectivity, unsigned int alphabet_size, unsigned int n_classes, typename InteractionClass >
 double lattice_model<dimensions, n_directions, connectivity, alphabet_size, n_classes, InteractionClass>::getEnergy( const std::string& path, const std::string& sequence ){
 	double ene = 0.;
-	for( unsigned int i = 0; i!=sequence.size(); ++i ){
-		for( unsigned int j = i; j!=sequence.size(); ++j ){
-			int cls = getInteractionClass(path, i, j);
+	unsigned int size = sequence.size();
+	for( unsigned int i = 0; i!=size-1; ++i ){
+		for( unsigned int j = i+1; j!=size; ++j ){
+			int cls = getInteractionClass(path, i, j-1);
 			if(cls >-1 and cls <n_classes){
 				ene += energy_parameters.getParameter( sequence[i], sequence[j], cls );
 			}
 		}
 	}
 	return ene;
+}
+
+//TODO
+template< unsigned int dimensions, unsigned int n_directions, unsigned int connectivity, unsigned int alphabet_size, unsigned int n_classes, typename InteractionClass >
+double lattice_model<dimensions, n_directions, connectivity, alphabet_size, n_classes, InteractionClass>::getEnergy( const std::string& sequence, const contact_map_type& map ){
+  return 0;
+}
+
+template< unsigned int dimensions, unsigned int n_directions, unsigned int connectivity, unsigned int alphabet_size, unsigned int n_classes, typename InteractionClass >
+density_of_states lattice_model<dimensions, n_directions, connectivity, alphabet_size, n_classes, InteractionClass>::getDensityOfStates( const std::string& sequence ){
+  compute_density_of_states< lattice_model<dimensions, n_directions, connectivity, alphabet_size, n_classes, InteractionClass> > dos(*this);
+  iterateSAW(sequence.size(),dos)( {sequence} );
+  return dos.getDensityOfStates();
 }
 
 template< unsigned int dimensions, unsigned int n_directions, unsigned int connectivity, unsigned int alphabet_size, unsigned int n_classes, typename InteractionClass >
@@ -105,14 +122,13 @@ typename lattice_model<dimensions, n_directions, connectivity, alphabet_size, n_
 
 template< unsigned int dimensions, unsigned int n_directions, unsigned int connectivity, unsigned int alphabet_size, unsigned int n_classes, typename InteractionClass >
 template< typename Functor >
-typename lattice_model<dimensions, n_directions, connectivity, alphabet_size, n_classes, InteractionClass>::template iterator<Functor>::paths lattice_model<dimensions, n_directions, connectivity, alphabet_size, n_classes, InteractionClass>::iterateRW( unsigned int length, Functor& todo ){
-	return space.iterate_RW(length, todo);
-}
-
-template< unsigned int dimensions, unsigned int n_directions, unsigned int connectivity, unsigned int alphabet_size, unsigned int n_classes, typename InteractionClass >
-template< typename Functor >
 typename lattice_model<dimensions, n_directions, connectivity, alphabet_size, n_classes, InteractionClass>::template iterator<Functor>::paths lattice_model<dimensions, n_directions, connectivity, alphabet_size, n_classes, InteractionClass>::iterateSAW( unsigned int length, Functor& todo ){
 	return space.iterate_SAW(length, todo);
 }
+
+template< unsigned int dimensions, unsigned int n_directions, unsigned int connectivity, unsigned int alphabet_size, unsigned int n_classes, typename InteractionClass >
+void lattice_model<dimensions, n_directions, connectivity, alphabet_size, n_classes, InteractionClass>::initialize_SAW(unsigned int length){
+  space.initialize_SAW(length);
+};
 
 #endif 

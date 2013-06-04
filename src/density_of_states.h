@@ -25,14 +25,19 @@
 #include <float.h>
 
 class density_of_states{
-	private:
-		typedef std::map<double, double> density_type;
 	protected:
+		typedef std::map<double, double> density_type;
 		std::string sequence;
 		density_type density;
 	public:
-		density_of_states(std::string line);
+	  density_of_states(){};
 		std::string toString();
+    void fromString(const std::string&);
+    
+    void clear();
+    void setBin(double en, double dos);
+    void incrementBin(double en, double incr);
+    double getBin(double en);
 		
 		typedef typename density_type::iterator iterator;
     typedef typename density_type::const_iterator const_iterator;
@@ -46,7 +51,24 @@ class density_of_states{
 		double transitionTemperature( double initial_temperature = 1., double accuracy = 0.01 );
 };
 
-density_of_states::density_of_states(std::string line){
+void density_of_states::clear(){
+  density.clear();
+}
+
+void density_of_states::setBin(double en, double dos){
+  density[en] = dos;
+}
+
+void density_of_states::incrementBin(double en, double incr){
+  density[en]+=incr;
+}
+
+double density_of_states::getBin(double en){
+  return density[en];
+}
+
+/*
+void density_of_states::fromString(std::string line){
 	std::istringstream iss(line);
 	std::vector<std::string> tokens;
 	copy( std::istream_iterator<std::string>(iss),
@@ -63,7 +85,7 @@ density_of_states::density_of_states(std::string line){
 		density[key] = value;
 	}
 }
-
+*/
 std::string density_of_states::toString(){
 	std::ostringstream line;
 	line << sequence;
@@ -77,7 +99,7 @@ std::string density_of_states::toString(){
 	}
 	return line.str();
 }
-
+/*
 density_of_states::iterator density_of_states::transitionBarrier(){
 	iterator it = begin(), itm = begin(), itp = begin(), last = end();
 	--last;
@@ -145,5 +167,5 @@ double density_of_states::transitionTemperature( double initial_temperature, dou
 	}
 	return temperature;
 }
-
+*/
 #endif
