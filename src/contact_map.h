@@ -48,11 +48,13 @@ class contact_map{
 template< unsigned int n_classes, typename InteractionClass >
 contact_map<n_classes, InteractionClass>::contact_map( std::string path ){
   unsigned int size = path.size();
-  for(unsigned int i=0; i != size-1; ++i){
-    for(unsigned int j=i; j != size; ++j){
+  for(unsigned int i=0; i!=size-1; ++i){
+    for(unsigned int j=i+1; j!=size; ++j){
       unsigned int cnt = ( (1<<j)|(1<<i) );
       int cls = getInteractionClass( path, i, j );
-      addContact( cnt, cls );
+      if( cls > -1 and cls < n_classes ){
+        addContact( cnt, cls );
+      }
     }
   }
 }

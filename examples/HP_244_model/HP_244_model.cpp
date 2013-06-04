@@ -17,13 +17,12 @@ template <typename Model, typename Functor>
 struct compute_contact_map: public iterate<Functor>{
   typename Model::contact_map_type (Model::*pt2Member)(const std::string&);
   Model* model;
-  compute_contact_map(Functor& todo, Model& mdl) : iterate<Functor>::iterate(0,0,0,0,todo){
+  compute_contact_map( Model& mdl, Functor& todo) : iterate<Functor>::iterate(0,0,0,0,todo), pt2Member( &Model::getContactMap ){
     model = &mdl;
-    pt2Member = &Model::getContactMap;
   };
 
   void operator()(typename iterate<Functor>::kwargs_type kwargs){
-    typename Model::contact_map_type cnt = model->getContactMap(kwargs.front());
+    typename Model::contact_map_type cnt = (model->getContactMap)(kwargs.front());
     kwargs.push_back(cnt.toString());
     iterate<Functor>::todo(kwargs);
 	}
@@ -75,7 +74,7 @@ int main(int argc,char* argv[]){
     hp244.iterateSAW(length,print)();
   }
   else if (print_cnt_flag){
-    compute_contact_map<model,general_purpose_printer> contact(print, hp244);
+    compute_contact_map<model,general_purpose_printer> contact(hp244,print);
     hp244.iterateSAW(length,contact)();
   } 
   return 0;

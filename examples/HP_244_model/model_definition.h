@@ -41,9 +41,9 @@ struct get_interaction{
 	int operator()( const std::string& path, unsigned int i, unsigned int j ){
 		unsigned int seq_dist = abs(j-i);
 		if( seq_dist < 2 ){
-			return 1;
+			return -1;
 		}
-		std::string subpath = path.substr(i,seq_dist);
+		std::string subpath = path.substr(i,seq_dist+1);
 		unsigned int distance = space.endToEndDistance( subpath );
 		if(distance==1){
 			return 0;
