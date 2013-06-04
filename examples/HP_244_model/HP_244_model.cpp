@@ -62,6 +62,7 @@ int main(int argc,char* argv[]){
   }
   else if(print_dos_flag){
     hp244.initialize_SAW(length);
+    hp244.initialize_energy_param("../src/default/hp_hamiltonian.param");
     iterate_compute_density_of_states<model,general_purpose_printer> it_dos(hp244, print);
     hp244.iterateSequences(length,0,it_dos)();
   } 

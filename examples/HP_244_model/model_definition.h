@@ -57,6 +57,8 @@ const std::array<char,alphabet_size> alphabet = hp::alphabet;
 typedef lattice_model<dimensions,n_directions,connectivity,alphabet_size,n_classes,get_interaction> model;
 typedef contact_map<n_classes,get_interaction> contact_map;
 
+typedef hamiltonian<alphabet_size, n_classes> hamiltonian;
+
 } // end namespace
 
 #endif

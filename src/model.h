@@ -64,8 +64,11 @@ class lattice_model{
     template< typename Functor >
     typename iterator<Functor>::paths iterateSAW( unsigned int length, Functor& todo );
     
+    void initialize_energy_param(std::string filename);
+    
     void initialize_SAW(unsigned int length);
     void initialize_SAW(std::string filename);
+    
 
 };
 
@@ -129,6 +132,11 @@ typename lattice_model<dimensions, n_directions, connectivity, alphabet_size, n_
 template< unsigned int dimensions, unsigned int n_directions, unsigned int connectivity, unsigned int alphabet_size, unsigned int n_classes, typename InteractionClass >
 void lattice_model<dimensions, n_directions, connectivity, alphabet_size, n_classes, InteractionClass>::initialize_SAW(unsigned int length){
   space.initialize_SAW(length);
+};
+
+template< unsigned int dimensions, unsigned int n_directions, unsigned int connectivity, unsigned int alphabet_size, unsigned int n_classes, typename InteractionClass >
+void lattice_model<dimensions, n_directions, connectivity, alphabet_size, n_classes, InteractionClass>::initialize_energy_param(std::string filename){
+  energy_parameters.readFromFile(filename);
 };
 
 #endif 
