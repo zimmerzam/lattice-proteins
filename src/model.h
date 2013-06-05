@@ -43,7 +43,7 @@ class lattice_model{
     typedef contact_map<n_classes, InteractionClass> contact_map_type;
     
 		lattice_model( std::array<char, alphabet_size> letters ):sequence(letters), energy_parameters(letters){};
-		double getEnergy( std::string path, std::string sequence );
+		double getEnergy( const std::string& path, const std::string& sequence );
 		double getEnergy( const std::string& sequence, const contact_map_type& map );
 		density_of_states getDensityOfStates( const std::string& sequence );
 		contact_map_type getContactMap( const std::string& path );
@@ -75,11 +75,11 @@ class lattice_model{
 };
 
 template< unsigned int dimensions, unsigned int n_directions, unsigned int connectivity, unsigned int alphabet_size, unsigned int n_classes, typename InteractionClass >
-double lattice_model<dimensions, n_directions, connectivity, alphabet_size, n_classes, InteractionClass>::getEnergy( std::string path, std::string sequence ){
+double lattice_model<dimensions, n_directions, connectivity, alphabet_size, n_classes, InteractionClass>::getEnergy( const std::string& path, const std::string& sequence ){
 	double ene = 0.;
-  std::string::iterator last = path.end(); --last;
-  for(std::string::iterator i = path.begin(); i!=last; ++i){ 
-		for(std::string::iterator j = i; j!=path.end(); ++j){
+  std::string::const_iterator last = path.end(); --last;
+  for(std::string::const_iterator i = path.begin(); i!=last; ++i){ 
+		for(std::string::const_iterator j = i; j!=path.end(); ++j){
 		  unsigned int ch_i = std::distance( path.begin(), i );
 		  unsigned int ch_j = std::distance( path.begin(), j );
 			int cls = getInteractionClass(path, ch_i, ch_j );
