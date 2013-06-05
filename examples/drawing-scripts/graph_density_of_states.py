@@ -53,7 +53,8 @@ for line in density_file:
   seq = token[0]
   x = []
   y = []
-  for dos in token[1:-n_info-1]:
+  tk = token[1:-n_info] if n_info else token[1:]
+  for dos in tk:
     energy,value = dos[1:-1].split(',')
     if(float(value)>0):
       x.append( float(energy) )
