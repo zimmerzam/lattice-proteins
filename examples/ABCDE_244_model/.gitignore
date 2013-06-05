@@ -1,1 +1,3 @@
 ABCD_244_model
+*.param
+!abcd_hamiltonian.dat
