@@ -38,19 +38,28 @@ const unsigned int n_classes = 2;
 
 struct get_interaction{
 	lattice<dimensions,n_directions,connectivity> space;
-	
-	int operator()( const std::string& path, unsigned int i, unsigned int j ){
-		unsigned int seq_dist = abs(j-i);
-		if( seq_dist < 2 ){
-			return -1;
-		}
-		std::string subpath = path.substr(i,seq_dist+1);
-		unsigned int distance = space.endToEndDistance( subpath );
-		if(distance==1){
-			return 0;
-		}
-		return 1;
-	}
+	bool fast;
+	unsigned int last_i;
+	std::map<char, unsigned int> validator;
+
+	int operator()( const std::string& path, const unsigned int& i, const unsigned int& j ){
+    if(i!=last_i){
+      validator.clear();
+      last_i = i;
+    }
+    ++validator[path[j]];
+    unsigned int dist = 0;
+    for( typename lattice<dimensions,n_directions,connectivity>::direction_type::iterator it = space.direction.begin(); it!= space.direction.end(); ++it ){
+	    dist += abs( validator[*it] - validator[ space.opposite[*it] ] );
+    }
+    if (abs(j-i) < 2){
+      return -1;
+    }
+    if(dist==2){
+      return 0;
+    }
+    return 1;
+  }
 };
 
 const std::array<char,alphabet_size> alphabet = hp::alphabet;

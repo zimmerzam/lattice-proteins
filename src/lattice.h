@@ -34,14 +34,13 @@
 
 template< unsigned int dimensions, unsigned int n_directions, unsigned int connectivity >
 class lattice{
-  private:
+  public:
     typedef typename std::array< char, n_directions > direction_type;
     typedef typename std::array< std::set< char >, dimensions-1 > symmetry_excluded_type;
     typedef typename std::map< char, char > opposite_type;
     typedef typename std::map< char, std::array<char, connectivity> > next_type;
     typedef std::set<std::string> list;
   	typedef std::map<unsigned int, list> database;
-  protected:
     direction_type direction;
     symmetry_excluded_type symmetry_excluded;
     opposite_type opposite;
@@ -56,7 +55,6 @@ class lattice{
     // Databases
     std::set<unsigned int> saw_initialized;
     database saws;
-  public:
   	/* constructor and non-iterative methods */
   	lattice();
     unsigned int endToEndDistance(const std::string& path);
@@ -158,8 +156,8 @@ void lattice<dimensions, n_directions, connectivity>::sawUpdate( std::string pat
 template< unsigned int dimensions, unsigned int n_directions, unsigned int connectivity >
 unsigned int lattice<dimensions, n_directions, connectivity>::endToEndDistance(const std::string& path){
 	std::map<char,unsigned int> validator;
-	for(unsigned int i = 0; i!=path.size(); ++i){
-		++validator[ path[path.size()-1-i] ];
+	for(std::string::const_reverse_iterator i=path.rbegin(); i!=path.rend(); ++i){
+		++validator[ *i ];
 	}
 	unsigned int dist = 0;
 	for( typename direction_type::iterator it = direction.begin(); it!= direction.end(); ++it ){

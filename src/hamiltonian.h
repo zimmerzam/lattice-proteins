@@ -49,8 +49,8 @@ class hamiltonian{
 		void readFromFile(std::string filename);
 		void print();
 		
-		double getParameter(char ch1, char ch2, int cls);
-		void   setParameter(char ch1, char ch2, int cls, double value);
+		double& getParameter(char ch1, char ch2, int cls);
+		void    setParameter(char ch1, char ch2, int cls, double value);
 };
 
 template<unsigned int alphabet_size, unsigned int n_classes>
@@ -115,7 +115,7 @@ void hamiltonian< alphabet_size, n_classes >::print(){
 }
 
 template<unsigned int alphabet_size, unsigned int n_classes>
-double hamiltonian< alphabet_size, n_classes >::getParameter(char ch1, char ch2, int cls){
+double& hamiltonian< alphabet_size, n_classes >::getParameter(char ch1, char ch2, int cls){
 	return parameters[std::make_pair(ch1,ch2)][cls];
 }
 

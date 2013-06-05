@@ -23,11 +23,12 @@
 #define ITERATE_COMPUTE_DOS_H
 
 #include <string>
+#include <iostream>
 #include "../../density_of_states.h"
 
 template <typename Model, typename Functor>
 struct iterate_compute_density_of_states: public iterate<Functor>{
-  double (Model::*pt2MemberEnergy)(const std::string&, const std::string&);
+  double (Model::*pt2MemberEnergy)(std::string, std::string);
   typename Model::template iterator<Functor>::paths (Model::*pt2MemberIterator)( unsigned int length, Functor& todo );
 
   Model* model;
@@ -47,8 +48,9 @@ struct iterate_compute_density_of_states: public iterate<Functor>{
       std::string seq  = (*it); ++it;
       std::string path = (*it);
       double en = (parent->model->getEnergy)(path, seq);
+      //double en = 0;
       density.incrementBin(en,1.);
-      ++n_states;  
+      ++n_states;
     }
     
     void clear(){
