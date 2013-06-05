@@ -49,11 +49,11 @@ density_file = open(filename, 'r')
 
 data = {}
 for line in density_file:
-  token = line.split('  ')
+  token = line.split()
   seq = token[0]
   x = []
   y = []
-  for dos in token[1:-1-n_info]:
+  for dos in token[1:-n_info-1]:
     energy,value = dos[1:-1].split(',')
     if(float(value)>0):
       x.append( float(energy) )
@@ -61,9 +61,8 @@ for line in density_file:
   data[seq] = {"energy":x, "value":y, "info":token[-n_info-1:-1]}
 length = len(data.keys()[0])
 
-
 while True:
-  print "Insert an HP sequence (or a list of comma-separated HP sequences) of length " + str(length) + "\nor a valid options ('d','f','l', 't','q')"
+  print "Insert a sequence (or a list of comma-separated sequences) of length " + str(length) + "\nor a valid option ('d','f','l', 't','q')"
   line = sys.stdin.readline()[:-1]
   if (line == 'Q' or line == 'q'):
     print "Goodbye!\n"
