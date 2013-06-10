@@ -57,8 +57,8 @@ parameters.
 
 ### Example line ###
 
-`RES   A  B  C  D`
+`RES   A  B  C  D`  
 `HAM   0  2  0  0  0  3  0  0  0  0`
 
 In this simple example this is the order used in order to list the parameters:  
-AA AB AC AD BB BC BD CC CD DD 
+`AA AB AC AD BB BC BD CC CD DD`
