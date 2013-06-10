@@ -30,13 +30,13 @@ template< typename Functor >
 class iterate{
 	protected:
 		unsigned int length; 
-		unsigned int first; 
-		unsigned int last; 
-		unsigned int skip; 
+		unsigned long int first; 
+		unsigned long int last; 
+		unsigned long int skip; 
 		Functor& todo;
 	public:
 		typedef std::list<std::string> kwargs_type;
-		iterate( unsigned int length, unsigned int first, unsigned int last, unsigned int skip, Functor& todo ): length(length),first(first),last(last),skip(skip), todo(todo){};
+		iterate( unsigned int length, unsigned long int first, unsigned long int last, unsigned long int skip, Functor& todo ): length(length),first(first),last(last),skip(skip), todo(todo){};
 		void operator()( kwargs_type kwargs = kwargs_type({}) ){
 			todo(kwargs);
 		};

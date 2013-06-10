@@ -11,8 +11,8 @@ int main(int argc,char* argv[]){
   bool print_saw_flag = false, print_seq_flag = false, print_cnt_flag = false;
   bool print_dos_flag = false;
   bool usage_flag = false;
-  unsigned int length = 0;
-  unsigned int first = 1, last = 0, skip = 0;
+  unsigned long int length = 0;
+  unsigned long int first = 1, last = 0, skip = 0;
   std::string hamiltonian_param_file = "abcd_hamiltonian.param";
   int c;
 
@@ -70,6 +70,7 @@ int main(int argc,char* argv[]){
   general_purpose_printer print;
   
   if (print_seq_flag){
+  	std::cout << length << "  " << first << "  " << last << "  " << skip << std::endl;
   	if(first > last){
 	    abcd244.iterateSequences(length,skip,print)();
 	  }

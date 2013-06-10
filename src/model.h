@@ -83,7 +83,7 @@ double lattice_model<dimensions, n_directions, connectivity, alphabet_size, n_cl
 		  unsigned int ch_i = std::distance( path.begin(), i );
 		  unsigned int ch_j = std::distance( path.begin(), j );
 			int cls = getInteractionClass(path, ch_i, ch_j );
-			if(cls >-1 and cls <n_classes){
+			if(cls >-1 and cls <(int)n_classes){
 				ene += energy_parameters.getParameter( sequence[ch_i], sequence[ch_j+1], cls );
 			}
 		}

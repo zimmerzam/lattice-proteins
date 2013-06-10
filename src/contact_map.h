@@ -52,7 +52,7 @@ contact_map<n_classes, InteractionClass>::contact_map( std::string path ){
     for(unsigned int j=i+1; j!=size; ++j){
       unsigned int cnt = ( (1<<j)|(1<<i) );
       int cls = getInteractionClass( path, i, j );
-      if( cls > -1 and cls < n_classes ){
+      if( (int)cls > -1 and cls < (int)n_classes ){
         addContact( cnt, cls );
       }
     }

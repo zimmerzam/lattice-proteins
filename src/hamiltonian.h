@@ -44,6 +44,11 @@ class hamiltonian{
 					pairs.push_back( std::make_pair( alphabet[i], alphabet[j] ) );
 				}
 			}
+			for(unsigned int i = 0; i < alphabet.size(); ++i){
+				for(unsigned int j = i; j < alphabet.size(); ++j){
+					pairs.push_back( std::make_pair( alphabet[j], alphabet[i] ) );
+				}
+			}
 		};
 		
 		void readFromFile(std::string filename);
@@ -83,8 +88,13 @@ void hamiltonian< alphabet_size, n_classes >::readFromFile(std::string filename)
 			copy( std::istream_iterator<std::string>(iss),
 						std::istream_iterator<std::string>(),
 						std::back_inserter<std::vector<std::string> >(tokens));
+			if( 2*(tokens.size()-1) != pairs.size() ){
+				std::cout << std::endl << "!!!! Probably a wrong parameter file !!!!\n";
+					return;
+			}
 			for(unsigned int i = 1; i != tokens.size(); ++i){
 				parameters[ pairs[i-1] ][idx] = atof(tokens[i].c_str());
+				parameters[ pairs[tokens.size()+i-2] ][idx] = atof(tokens[i].c_str());
 			}
    		++idx;
    	}
