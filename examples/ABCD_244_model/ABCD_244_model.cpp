@@ -70,7 +70,6 @@ int main(int argc,char* argv[]){
   general_purpose_printer print;
   
   if (print_seq_flag){
-  	std::cout << length << "  " << first << "  " << last << "  " << skip << std::endl;
   	if(first > last){
 	    abcd244.iterateSequences(length,skip,print)();
 	  }
