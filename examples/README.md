@@ -1,20 +1,42 @@
 # Example files description #
 
-## structures.cpp ##
+You can build all the examples with the command `make`
 
-This programs allows the user to compute all the self-avoiding-walks (**saw**s) 
-of a given length on a square lattice.  
+## sequences.cpp ##
 
-In order to build the executable use the command `make structures`.  
+This is a really very simple (and useless?) program I wrote in order to show 
+how to use the **iterator** class.  
+The program iterates all the possible five-char strings of 'A','B' and 'C'.
+
+In order to build the executable use the command `make sequences`.  
 
 The usage is very simple. Write  
 
-`./structures -l length [options]`
+`./sequences -l length [options]`
+
+where *length* is an integer relative to the number of residues in the saw.  
+
+The output is in the *sequence format* described in the *example_data_files* 
+README.
+
+Use the option *-h* for a comprehensive list of options and/or for help.
+
+## saw.cpp ##
+
+This programs allows the user to compute all the self-avoiding-walks (**saw**s) 
+of a given length on a square or cubic lattice.  
+
+In order to build the executable use the command `make saw`.  
+
+The usage is very simple. Write  
+
+`./saw -l length [options]`
 
 where *length* is an integer relative to the number of residues in the saw.  
 
 By default the program prints the number of different saws it computed. If the
-option *-p* is passed, it prints all the saws in the SAW format described above.  
+option *-p* is passed, it prints all the saws in the *path format* described
+in the *example_data_files* README.  
 
 Use the option *-h* for help.
 
@@ -22,67 +44,53 @@ Use the option *-h* for help.
 
 The following command:  
 
-`./structures -l 16`
+`./saw -l 16 -d 2`
 
 should return  
 
 `I have found 802075 self-avoiding-walks`.
 
-## density_of_states.cpp ##
+## model.cpp ##
 
-This program takes a file with a list of self-avoiding-walks and print the 
-density of states for each *HP* sequence of the appropriate length.  
+A very minimal working example of how to build a lattice model (in this case an
+`HP` model on a square lattice) and how to iterate every possible paths and 
+sequences.
 
-The program can also be used to filter and existing density_of_states file.
-The only available filter excludes all the sequences that are not a 
-two-state folder. You can use it by enabling the flag *-t*.  
+In order to build the executable use the command `make model`.  
 
-In order to build the executable use the command `make density_of_states`.  
+# TODO #
+Allow the user to enter the length of the paths and what to print as output 
+(list of sequences or list of paths)
 
 ### Example usage ###
 
-`./density_of_states -s saw.dat`
+The following command:  
 
-or
+`./model`
 
-`./density_of_states -d density.dat -t`.
+should return a list of five-char string representing sequences and a list of all
+five-residues saw paths on a square lattice.
 
-## transition.cpp ##
+## hamiltonian.cpp ##
 
-This program takes a file containing a list of density of states and for each
-line adds two fields:  
+This script simply read a file containing the hamiltonian parameters for your 
+model (See the *example_data_files* README for more informations about the 
+hailtonian file format ) and print it out. It can be used to check the 
+correctness of the file.
 
-the *first field* is the energy at which there is the transition (concavity of
-density of states change sign)  
+In order to build the executable use the command `make hamiltonian`. 
 
-the *second field* is the transition energy  
+ ### Example usage ###
 
-To build the executable use the command `make transition`  
+The following command:  
 
-Basic usage:  
+`./hamiltonian -f parameter_file -a comma_separated_list_of_residue`
 
-`./transition -d density_file`.
+should print the content of the input file.  
+For example  
 
-## graph_density_of_states.py ##
+`./hamiltonian -f example_data_files/hamiltonian.param -a A,B,C,D`
 
-This script takes a density\_of\_states file and plot a graph with free energy
-or density of states (depending on the options passed)
+# Drawing paths, density of states and more #
 
-Basic usage:  
-
-`./graph_density_of_states.py [options] density_file`.  
-
-For a detailed list of options use the flag `-h`.  
-
-It is possible to use this script in order to read files with additional 
-informations on each line. The additional info will be printed on the shell.
-Suppose the file contains two more fields at the eand of each line. The first 
-field being a *temperature* and the second an *energy*.  
-Simply use the command  
-
-`./graph_density_of_states.py density_file -a temperature,energy`
-
-and the file will be processed correctly.  
-
-Note: some options can be changed in runtime!
-
+See the README.md file provided in the *drawing-scripts* directory.

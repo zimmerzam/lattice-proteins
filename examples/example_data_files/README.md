@@ -16,7 +16,7 @@ lattice each path could be a sequence of 'N', 'S', 'W' and 'E' ('N' is North,
 Each line contains a variable number of space-separated fields, depending on the
 number of contact classes you define in your model.
 
-The *first filed* always describes a path
+The *first field* always describes a path
 
 The *following fields* describes list the pair of residues that belongs to each 
 of the contact classes defined. Each *field* is a list of comma-separated 
