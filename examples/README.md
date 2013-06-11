@@ -58,7 +58,7 @@ sequences.
 
 In order to build the executable use the command `make model`.  
 
-# TODO #
+### TODO ###
 Allow the user to enter the length of the paths and what to print as output 
 (list of sequences or list of paths)
 
