@@ -35,11 +35,12 @@
 template< unsigned int dimensions, unsigned int n_directions, unsigned int connectivity, unsigned int alphabet_size, unsigned int n_classes, typename InteractionClass >
 class lattice_model{
 	private:
-		lattice<dimensions, n_directions, connectivity> space;
+		
 		word<alphabet_size> sequence;
 		hamiltonian<alphabet_size, n_classes> energy_parameters;
 		InteractionClass getInteractionClass;
 	public:
+	  lattice<dimensions, n_directions, connectivity> space;
     typedef contact_map<n_classes, InteractionClass> contact_map_type;
     
 		lattice_model( std::array<char, alphabet_size> letters ):sequence(letters), energy_parameters(letters){};
